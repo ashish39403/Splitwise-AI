@@ -1,7 +1,7 @@
 # Splitter AI — Database Models
 
 **Status:** Proposed domain model  
-**Database:** Supabase PostgreSQL  
+**Database:** Neon PostgreSQL (Lakebase Postgres)  
 **ORM:** Django ORM  
 **Scope:** Internship MVP
 
@@ -9,9 +9,9 @@
 
 ## 1. Modeling Principles
 
-- Supabase Auth owns authentication records.
+- Neon Auth (Managed Better Auth) owns authentication records in the managed `neon_auth` schema.
 - Django owns application records and business rules.
-- Application tables reference the Supabase user ID through an application profile.
+- Application tables reference the Neon Auth user ID through an application profile.
 - Expenses and settlements are historical records; balances are derived from them.
 - Money is stored exactly in minor units, such as paise, using integer fields.
 - Database constraints protect basic invariants; service-layer validation handles complex rules.
@@ -33,7 +33,7 @@ erDiagram
 
     APPLICATION_PROFILE {
         uuid id PK
-        string supabase_user_id UK
+        string neon_auth_user_id UK
         string display_name
         string email
         string avatar_url
@@ -103,12 +103,12 @@ erDiagram
 
 ### 3.1 `ApplicationProfile`
 
-Represents the application-level identity linked to a user managed by Supabase Auth.
+Represents the application-level identity linked to a user managed by Neon Auth.
 
 | Field | Type | Rules |
 | --- | --- | --- |
 | `id` | UUID | Primary key |
-| `supabase_user_id` | String | Required and unique; value from the verified JWT `sub` claim |
+| `neon_auth_user_id` | String | Required and unique; value from the verified JWT `sub` claim |
 | `display_name` | String | Required; shown in groups and expenses |
 | `email` | String | Optional cached value; must not be treated as the authentication source of truth |
 | `avatar_url` | URL/String | Optional |
@@ -310,7 +310,7 @@ Recommended indexes:
 - `Expense(payer_id)`
 - `ExpenseParticipant(expense_id, profile_id)`
 - `Settlement(group_id, settled_on)`
-- `ApplicationProfile(supabase_user_id)` unique index
+- `ApplicationProfile(neon_auth_user_id)` unique index
 
 Common queries:
 
@@ -354,11 +354,11 @@ If the project remains a single Django app initially, keep the same conceptual s
 ## 10. Migration and Environment Rules
 
 - Use Django migrations as the source of truth for application schema changes.
-- Use a direct Supabase PostgreSQL connection for migrations when required by the deployment setup.
+- Use the appropriate Neon connection URL for application traffic and a direct/non-pooled URL for migrations when required.
 - Use environment variables for database URLs and credentials.
-- Never commit Supabase keys or connection strings.
+- Never commit Neon credentials or connection strings.
 - Keep development and production database credentials separate.
-- Test migrations against a disposable or development Supabase project before production.
+- Test migrations against a development Neon branch before production.
 
 ## 11. MVP Decisions
 
@@ -368,7 +368,7 @@ If the project remains a single Django app initially, keep the same conceptual s
 | Money storage | Integer minor units, paise |
 | Balance storage | Derived dynamically |
 | Debt recommendations | Derived dynamically; not persisted |
-| Authentication identity | Supabase user ID mapped to `ApplicationProfile` |
+| Authentication identity | Neon Auth user ID mapped to `ApplicationProfile` |
 | Expense source | Manual or AI Quick Add |
 | Settlements | User-recorded; no external payment processing |
 | Membership uniqueness | One membership per profile per group |

@@ -16,27 +16,27 @@ Before making architectural or feature changes, read the relevant documents in `
 
 - **Frontend:** React + TypeScript
 - **Backend:** Django + Django REST Framework
-- **Authentication:** Supabase Auth
-- **Database:** Supabase PostgreSQL
+- **Authentication:** Neon Auth (Managed Better Auth)
+- **Database:** Neon PostgreSQL (Lakebase Postgres)
 - **AI pipeline:** LangChain + `langchain-openai` + OpenAI API
 
-Do not introduce Neon, a second database, or a second authentication provider unless the user explicitly changes the architecture.
+Do not introduce a second database or a second authentication provider unless the user explicitly changes the architecture.
 
 ## Architecture Rules
 
 The intended request flow is:
 
 ```text
-React → Django REST API → Supabase PostgreSQL
-React → Supabase Auth
+React → Django REST API → Neon PostgreSQL
+React → Neon Auth
 Django → LangChain → OpenAI API
 ```
 
 - React owns presentation, navigation, forms, and user interaction.
 - Django is the authoritative application and business-logic layer.
 - Django owns expense validation, balance calculation, debt simplification, settlement rules, and database writes.
-- Supabase Auth owns authentication identity and sessions.
-- Django must verify Supabase JWTs before serving protected data.
+- Neon Auth owns authentication identity and sessions. Neon Auth is managed Better Auth; do not install a separate self-managed Better Auth server.
+- Django must verify Neon Auth JWTs before serving protected data.
 - OpenAI must be called only from Django; never expose the OpenAI key in frontend code.
 - The AI parser proposes data; it must never directly create database records.
 - Confirmed AI data must pass through the same validation and expense-creation path as manual data.
@@ -44,10 +44,10 @@ Django → LangChain → OpenAI API
 ## Domain and Database Rules
 
 - Use the domain terms from `DATABASE_MODELS.md`: `ApplicationProfile`, `Group`, `GroupMembership`, `Expense`, `ExpenseParticipant`, and `Settlement`.
-- Link application profiles to Supabase users using the verified Supabase user ID.
-- Do not duplicate password or session management in Django when Supabase Auth is being used.
+- Link application profiles to Neon Auth users using the verified Neon Auth user ID.
+- Do not duplicate password or session management in Django when Neon Auth is being used.
 - Use Django migrations for application schema changes.
-- Do not modify Supabase’s internal authentication schema through application migrations.
+- Do not modify Neon Auth’s managed `neon_auth` schema through application migrations.
 - Keep application data and authentication data conceptually separate.
 - Preserve original expenses and settlement history; debt simplification is a derived recommendation.
 
@@ -85,7 +85,7 @@ Develop frontend and backend side by side in vertical slices. Do not wait for th
 
 ## Security and Secrets
 
-- Keep Supabase secret/service keys, database URLs, OpenAI keys, and Django secrets in environment variables.
+- Keep Neon credentials, database URLs, OpenAI keys, and Django secrets in environment variables.
 - Never commit `.env` files or credentials.
 - Never put secret keys in React environment variables or the browser bundle.
 - Do not log access tokens, passwords, API keys, or unnecessary financial payloads.

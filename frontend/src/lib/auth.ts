@@ -1,27 +1,35 @@
-import type { Session } from '@supabase/supabase-js'
+import { neonAuth, neonAuthUrl } from './neon-auth'
 
-import { supabase } from './supabase'
-
-export async function signUp(email: string, password: string, fullName: string) {
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: fullName } },
-  })
-  if (error) throw error
+export async function signUp(email: string, password: string, name: string) {
+  const result = await neonAuth.signUp.email({ email, password, name })
+  if (result.error) throw new Error(result.error.message)
 }
-
 export async function signIn(email: string, password: string) {
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) throw error
+  const result = await neonAuth.signIn.email({ email, password })
+  if (result.error) throw new Error(result.error.message)
+}
+export async function signInWithGoogle() {
+  const result = await neonAuth.signIn.social({
+    provider: 'google',
+    callbackURL: `${window.location.origin}/dashboard`,
+  })
+  if (result.error) throw new Error(result.error.message)
+}
+export async function signOut() { await neonAuth.signOut() }
+export async function getSession() { return neonAuth.getSession() }
+
+async function emailOtp(path: string, body: Record<string, string>) {
+  const response = await fetch(`${neonAuthUrl}${path}`, {
+    method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+  })
+  const result: { message?: string } = await response.json().catch(() => ({}))
+  if (!response.ok) throw new Error(result.message || 'Email verification failed.')
 }
 
-export async function signOut() {
-  const { error } = await supabase.auth.signOut()
-  if (error) throw error
+export function resendVerificationCode(email: string) {
+  return emailOtp('/email-otp/send-verification-otp', { email, type: 'email-verification' })
 }
 
-export async function getSession(): Promise<Session | null> {
-  const { data } = await supabase.auth.getSession()
-  return data.session
+export function verifyEmailCode(email: string, otp: string) {
+  return emailOtp('/email-otp/verify-email', { email, otp })
 }

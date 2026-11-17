@@ -73,9 +73,7 @@ WSGI_APPLICATION = "splitwise_pro.wsgi.application"
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
-    raise ImproperlyConfigured(
-        "DATABASE_URL must be set to the Supabase PostgreSQL connection URL."
-    )
+    raise ImproperlyConfigured("DATABASE_URL must be set to the Neon PostgreSQL connection URL.")
 
 DATABASES = {
     "default": dj_database_url.parse(
@@ -94,12 +92,12 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
-    "DEFAULT_AUTHENTICATION_CLASSES": ["app.authentication.SupabaseAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["app.authentication.NeonAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
 }
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
-SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "")
+NEON_AUTH_BASE_URL = os.getenv("NEON_AUTH_BASE_URL", "").rstrip("/")
+NEON_AUTH_JWKS_URL = os.getenv("NEON_AUTH_JWKS_URL", "")
 
 
 # Password validation

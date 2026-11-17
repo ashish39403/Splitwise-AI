@@ -16,7 +16,7 @@ def me(request):
     return Response(
         {
             "id": str(profile.id),
-            "supabase_user_id": str(profile.supabase_user_id),
+            "neon_auth_user_id": str(profile.neon_auth_user_id),
             "display_name": profile.display_name,
             "email": profile.email,
         }

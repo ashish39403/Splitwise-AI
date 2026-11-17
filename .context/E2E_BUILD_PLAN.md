@@ -1,7 +1,7 @@
 # Splitter AI — End-to-End Build Plan
 
 **Target:** Internship MVP  
-**Architecture:** React + TypeScript → Django REST Framework → Supabase Auth/PostgreSQL → LangChain/OpenAI  
+**Architecture:** React + TypeScript → Django REST Framework → Neon Auth/PostgreSQL → LangChain/OpenAI  
 **Phases:** 7
 
 ## Build Strategy
@@ -45,14 +45,14 @@ Phase 7: Hardening, deployment, and final delivery
 
 ### Objective
 
-Create a clean, repeatable development environment for the React frontend, Django API, and Supabase PostgreSQL database.
+Create a clean, repeatable development environment for the React frontend, Django API, and Neon PostgreSQL database.
 
 ### Work
 
 - Confirm repository structure and environment configuration.
 - Configure Django and Django REST Framework.
 - Configure React with TypeScript and routing.
-- Connect Django to Supabase PostgreSQL.
+- Connect Django to Neon PostgreSQL.
 - Add environment variable handling.
 - Configure CORS for local frontend-to-backend requests.
 - Add API health endpoint and frontend API client.
@@ -64,7 +64,7 @@ Create a clean, repeatable development environment for the React frontend, Djang
 
 - React application starts locally.
 - Django API starts locally.
-- Django connects to Supabase PostgreSQL.
+- Django connects to Neon PostgreSQL.
 - `GET /api/health/` returns a successful response.
 - Frontend can display the API health status.
 - Secrets are excluded from Git.
@@ -81,16 +81,16 @@ Frontend runs → Backend runs → Database connection works → Health check pa
 
 ### Objective
 
-Implement a complete and verified Supabase Auth flow between React and Django.
+Implement a complete and verified Neon Auth flow between React and Django.
 
 ### Work
 
-- Configure Supabase Auth.
+- Configure Neon Auth (Managed Better Auth).
 - Implement React sign-up, sign-in, sign-out, and session refresh.
 - Add protected frontend routes.
-- Send the Supabase access token with Django API requests.
-- Implement Django JWT verification for Supabase tokens.
-- Create `ApplicationProfile` linked to the Supabase user ID.
+- Send the Neon Auth access token with Django API requests.
+- Implement Django JWT verification for Neon Auth tokens.
+- Create `ApplicationProfile` linked to the Neon Auth user ID.
 - Implement `GET /api/me/`.
 - Handle expired, missing, malformed, and invalid tokens.
 - Configure frontend and backend auth error states.
@@ -287,8 +287,8 @@ Make the MVP reliable, secure, demonstrable, and ready for internship evaluation
 - Improve loading, empty, and error states.
 - Configure production environment variables.
 - Deploy React frontend and Django backend separately.
-- Configure production CORS and Supabase redirect URLs.
-- Run database migrations against the production Supabase project.
+- Configure production CORS and Neon Auth trusted origins/redirect URLs.
+- Run database migrations against the production Neon branch.
 - Add API documentation.
 - Add setup and deployment instructions.
 - Prepare demo data and a presentation walkthrough.

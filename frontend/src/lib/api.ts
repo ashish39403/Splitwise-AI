@@ -50,7 +50,7 @@ export async function getHealth(signal?: AbortSignal): Promise<HealthResponse> {
   return payload
 }
 
-export type Profile = { id: string; supabase_user_id: string; display_name: string; email: string }
+export type Profile = { id: string; neon_auth_user_id: string; display_name: string; email: string }
 
 export async function getMe(accessToken: string): Promise<Profile> {
   const response = await fetch(`${apiBaseUrl}/api/me/`, {

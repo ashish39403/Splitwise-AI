@@ -12,8 +12,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="ApplicationProfile",
             fields=[
-                ("id", models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ("supabase_user_id", models.UUIDField(editable=False, unique=True)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4, editable=False, primary_key=True, serialize=False
+                    ),
+                ),
+                ("neon_auth_user_id", models.UUIDField(editable=False, unique=True)),
                 ("display_name", models.CharField(max_length=120)),
                 ("email", models.EmailField(blank=True, max_length=254)),
                 ("avatar_url", models.URLField(blank=True)),

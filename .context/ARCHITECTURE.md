@@ -19,24 +19,24 @@ Splitter AI follows a layered client-server architecture.
         │              │
         ▼              ▼
 ┌───────────────┐  ┌──────────────────┐
-│ Supabase      │  │ LangChain        │
+│ Neon          │  │ LangChain        │
 │ PostgreSQL    │  │ + OpenAI API     │
 │ application   │  │ AI Quick Add     │
 │ data          │  └──────────────────┘
 └───────────────┘
 
-React ───────────────► Supabase Auth
+React ───────────────► Neon Auth
 ```
 
-The frontend is responsible for presentation and user interaction. Django is the authoritative application layer and owns all financial calculations and database writes. Supabase provides authentication and PostgreSQL infrastructure. OpenAI is accessed only through the Django backend.
+The frontend is responsible for presentation and user interaction. Django is the authoritative application layer and owns all financial calculations and database writes. Neon provides Managed Better Auth and PostgreSQL infrastructure. OpenAI is accessed only through the Django backend.
 
 ## 2. Architectural Principles
 
 1. **Backend authority:** Expense validation, balance calculations, debt simplification, and settlements are controlled by Django.
-2. **Single source of truth:** Supabase PostgreSQL stores the application data; React does not directly modify expense data.
+2. **Single source of truth:** Neon PostgreSQL stores the application data; React does not directly modify expense data.
 3. **Explicit confirmation:** AI-generated expenses must be reviewed and confirmed before persistence.
 4. **Exact money handling:** Monetary values use integer minor units, such as paise, or another exact representation—not floating-point numbers.
-5. **Defense in depth:** Supabase authentication, Django authorization, database constraints, and input validation work together.
+5. **Defense in depth:** Neon Auth authentication, Django authorization, database constraints, and input validation work together.
 6. **Modular business logic:** Split calculations and debt simplification remain independent services that can be tested without HTTP or UI code.
 
 ## 3. Main Components
@@ -47,8 +47,8 @@ Responsibilities:
 
 - Render authentication, dashboard, group, expense, balance, and settlement screens.
 - Manage form state and client-side validation.
-- Use Supabase Auth for registration, sign-in, sign-out, and token refresh.
-- Attach the Supabase access token to Django API requests.
+- Use Neon Auth for registration, sign-in, sign-out, and token refresh.
+- Attach the Neon Auth access token to Django API requests.
 - Display AI-extracted data in an editable confirmation form.
 - Handle loading, empty, validation, unauthorized, and server-error states.
 
@@ -57,7 +57,7 @@ Suggested frontend areas:
 ```text
 src/
 ├── app/                 # routing and application providers
-├── auth/                # Supabase Auth integration
+├── auth/                # Neon Auth integration
 ├── features/
 │   ├── groups/
 │   ├── expenses/
@@ -74,8 +74,8 @@ src/
 Responsibilities:
 
 - Receive and authenticate API requests.
-- Verify Supabase JWTs.
-- Map the authenticated Supabase user to an application profile.
+- Verify Neon Auth JWTs.
+- Map the authenticated Neon Auth user to an application profile.
 - Enforce group and object-level permissions.
 - Validate expense and settlement data.
 - Run balance and debt calculations.
@@ -95,29 +95,29 @@ app/
 └── common/              # shared permissions, errors, and utilities
 ```
 
-### 3.3 Supabase Auth
+### 3.3 Neon Auth
 
-Supabase Auth owns user sign-up, sign-in, sessions, refresh tokens, and authentication providers.
+Neon Auth is Neon’s managed Better Auth service. It owns user sign-up, sign-in, sessions, refresh tokens, and authentication providers. Do not install or operate a separate self-managed Better Auth server.
 
 Authentication flow:
 
 ```text
-1. User signs in through React and Supabase Auth.
-2. Supabase returns an access token.
+1. User signs in through React and Neon Auth.
+2. Neon Auth returns an access token.
 3. React sends Authorization: Bearer <token> to Django.
 4. Django verifies signature, issuer, audience, and expiration.
-5. Django extracts the Supabase user ID from the verified token.
+5. Django extracts the Neon Auth user ID from the verified token.
 6. Django loads or creates the corresponding application profile.
 7. Django applies group-level authorization before returning data.
 ```
 
-The Supabase secret/service key must never be included in the frontend bundle. JWT verification must not rely on merely decoding the token.
+Neon credentials and private keys must never be included in the frontend bundle. JWT verification must not rely on merely decoding the token.
 
-### 3.4 Supabase PostgreSQL
+### 3.4 Neon PostgreSQL
 
-Supabase PostgreSQL stores application-owned data accessed through Django’s PostgreSQL driver and ORM.
+Neon PostgreSQL stores application-owned data accessed through Django’s PostgreSQL driver and ORM. Neon Auth remains the authentication provider.
 
-The database should contain a clear separation between authentication records managed by Supabase and application records managed by Django. Application migrations must not modify Supabase’s internal authentication schema.
+The database should contain a clear separation between authentication records managed by Neon Auth in the `neon_auth` schema and application records managed by Django. Application migrations must not modify the managed `neon_auth` schema.
 
 ## 4. Domain Model
 
@@ -141,7 +141,7 @@ ApplicationProfile
 
 | Entity | Purpose |
 | --- | --- |
-| `ApplicationProfile` | Application-specific profile linked to a Supabase user ID |
+| `ApplicationProfile` | Application-specific profile linked to a Neon Auth user ID |
 | `Group` | A collection of users sharing expenses |
 | `GroupMembership` | Membership, role, and status within a group |
 | `Expense` | Original expense, payer, amount, currency, and split method |
@@ -292,7 +292,7 @@ The backend should enforce these invariants:
 ## 9. Security and Privacy
 
 - Store secrets in environment variables.
-- Keep OpenAI and Supabase service credentials on the Django server.
+- Keep OpenAI and Neon credentials protected on the Django server.
 - Use HTTPS in deployed environments.
 - Validate and authorize every protected request in Django.
 - Configure CORS to allow only the deployed frontend origin.
@@ -308,14 +308,14 @@ User Browser
     │
     ├── React static application host
     │
-    └── Django API host ─── Supabase PostgreSQL
+    └── Django API host ─── Neon PostgreSQL
                               │
-                              └── Supabase Auth
+                              └── Neon Auth
 
 Django API ─── OpenAI API
 ```
 
-Development uses a local React application and local Django server connected to the Supabase project. Production deploys the frontend and backend separately, with environment-specific URLs and secrets.
+Development uses a local React application and local Django server connected to the Neon project/branch. Production deploys the frontend and backend separately, with environment-specific URLs and secrets.
 
 ## 11. Testing Strategy
 

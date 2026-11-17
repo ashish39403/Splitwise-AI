@@ -3,7 +3,7 @@
 **Status:** Draft  
 **Project type:** Internship project  
 **Product type:** Full-stack expense-sharing web application  
-**Final stack:** React, TypeScript, Django, Django REST Framework, Supabase Auth, Supabase PostgreSQL, LangChain, OpenAI API
+**Final stack:** React, TypeScript, Django, Django REST Framework, Neon Auth (Managed Better Auth), Neon PostgreSQL, LangChain, OpenAI API
 
 ## 1. Project Overview
 
@@ -268,10 +268,10 @@ An `Expense` should store the original expense information. An `ExpenseParticipa
 
 ### Authentication
 
-- Supabase Auth for registration, sign-in, and session management.
-- React uses the Supabase client for authentication.
-- Django verifies Supabase JWTs and applies application-level authorization.
-- The Supabase user ID is linked to the application profile used by groups and expenses.
+- Neon Auth (Managed Better Auth) for registration, sign-in, and session management.
+- React uses the Neon Auth client/SDK for authentication.
+- Django verifies Neon Auth JWTs and applies application-level authorization.
+- The Neon Auth user ID is linked to the application profile used by groups and expenses.
 
 ### Backend
 
@@ -284,7 +284,7 @@ An `Expense` should store the original expense information. An `ExpenseParticipa
 
 ### Database
 
-- Supabase PostgreSQL
+- Neon PostgreSQL (Lakebase Postgres)
 - Relational constraints and indexes
 - Exact monetary representation
 - Group-based query optimization

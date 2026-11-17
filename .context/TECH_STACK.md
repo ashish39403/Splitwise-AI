@@ -11,12 +11,12 @@
 
 ## Authentication
 
-- **Supabase Auth** — Handles registration, sign-in, sessions, and access tokens.
-- React sends the Supabase access token to Django. Django verifies the JWT and applies authorization rules.
+- **Neon Auth (Managed Better Auth)** — Handles registration, sign-in, sessions, and access tokens.
+- React uses the Neon Auth client/SDK. Django verifies the Neon Auth JWT and applies authorization rules.
 
 ## Database
 
-- **Supabase PostgreSQL** — Stores users’ application profiles, groups, members, expenses, shares, balances, and settlements.
+- **Neon PostgreSQL (Lakebase Postgres)** — Stores users’ application profiles, groups, members, expenses, shares, balances, and settlements.
 - Django accesses the database through the PostgreSQL connection and Django ORM.
 
 ## AI Pipeline
@@ -28,16 +28,16 @@
 ## Architecture Rule
 
 ```text
-React → Django REST API → Supabase PostgreSQL
-React → Supabase Auth
+React → Django REST API → Neon PostgreSQL
+React → Neon Auth
 Django → LangChain → OpenAI API
 ```
 
-Django remains the single owner of expense validation, balance calculation, debt simplification, settlements, and database writes. OpenAI keys and Supabase secret keys must remain on the backend.
+Django remains the single owner of expense validation, balance calculation, debt simplification, settlements, and database writes. OpenAI keys and Neon credentials must remain protected on the backend.
 
 ## Environment
 
-- **Development:** Supabase Free plan, local React frontend, local Django backend.
-- **Deployment:** Deploy React and Django separately, connected to the same Supabase project.
+- **Development:** Neon project with Managed Better Auth, local React frontend, local Django backend.
+- **Deployment:** Deploy React and Django separately, connected to the same Neon project and branch.
 
 This stack is sufficient for the internship MVP and can be expanded later with notifications, receipt processing, realtime updates, or payment integrations.
