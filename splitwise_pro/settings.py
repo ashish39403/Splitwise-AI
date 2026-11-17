@@ -94,10 +94,19 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
     "DEFAULT_AUTHENTICATION_CLASSES": ["app.authentication.NeonAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_THROTTLE_RATES": {"ai_quick_add": "10/min"},
 }
 
 NEON_AUTH_BASE_URL = os.getenv("NEON_AUTH_BASE_URL", "").rstrip("/")
 NEON_AUTH_JWKS_URL = os.getenv("NEON_AUTH_JWKS_URL", "")
+# Allow small clock differences between Django and Neon Auth. PyJWT rejects a
+# freshly issued token whose `iat`/`nbf` is even a few seconds in the future;
+# without leeway that surfaces as a spurious 401 right after a token refresh.
+NEON_AUTH_CLOCK_SKEW_SECONDS = int(os.getenv("NEON_AUTH_CLOCK_SKEW_SECONDS", "30"))
+
+# OpenAI is backend-only. The browser never receives this key.
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 
 # Password validation

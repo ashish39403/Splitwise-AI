@@ -1,11 +1,11 @@
 # Splitter AI — Database Models
 
-**Status:** Proposed domain model  
+**Status:** Implemented MVP schema and domain reference
 **Database:** Neon PostgreSQL (Lakebase Postgres)  
 **ORM:** Django ORM  
 **Scope:** Internship MVP
 
-> This document defines the target data model. The current Django project still contains the starter model file and SQLite development configuration, so these models are not yet implemented in code.
+> The MVP application schema is implemented through Django migrations for `ApplicationProfile`, `Group`, `GroupMembership`, `Expense`, `ExpenseParticipant`, and `Settlement`. Django is configured for Neon PostgreSQL through environment variables. This document remains the domain reference for future schema and business-rule changes.
 
 ## 1. Modeling Principles
 
